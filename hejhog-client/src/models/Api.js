@@ -17,10 +17,22 @@ class Api {
     })
   }
 
-  static individualApiCall(callbackFn, index) {
+  static individualApiCall(callbackFn, baseId) {
     $.ajax({
       type: 'GET',
-      url: `http://localhost:3000//api/v1/base_urls/${index}`,
+      url: `http://localhost:3000//api/v1/base_urls/${baseId}`,
+      contentType: 'application/json',
+      dataType: 'json',
+      success: function(response) {
+        callbackFn(response)
+      }
+    })
+  }
+
+  static callActualApi(baseUrl, mainPath, callbackFn) {
+    $.ajax({
+      type: 'GET',
+      url: `${baseUrl}${mainPath}`,
       contentType: 'application/json',
       dataType: 'json',
       success: function(response) {
@@ -42,4 +54,5 @@ static addApi(values) {
     }
   })
 }
+
 }

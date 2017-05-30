@@ -9,8 +9,17 @@ function getAPI() {
 
 function createApiListeners() {
   $(".api-base-link").click(function(e){
-    var index = this.id
+    var baseId = this.id
 
-    Api.individualApiCall(ApiView.individualApiRender, index)
+    Api.individualApiCall(ApiView.individualApiRender, baseId)
+  })
+}
+
+function createMainPathListeners(baseUrl) {
+  $(".main-path").click(function(e){
+    var mainPath = this.id
+
+    // call ajax to get specific apis information rendered
+    Api.callActualApi(baseUrl, mainPath, ApiView.mainPathRender)
   })
 }
