@@ -29,7 +29,7 @@ class Api {
     })
   }
 
-static addZoo(values) {
+static addApi(values) {
   $.ajax({
     type: 'POST',
     url: 'http://localhost:3000/api/v1/zoos',
