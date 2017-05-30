@@ -20,6 +20,6 @@ function createMainPathListeners(baseUrl) {
     var mainPath = this.id
 
     // call ajax to get specific apis information rendered
-    Api.callActualApi(baseUrl, mainPath, ApiView.mainPathRender)
+    Api.callActualApi(baseUrl, mainPath, Api.mainPathRender)
   })
 }
