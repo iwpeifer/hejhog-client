@@ -22,11 +22,23 @@ class ApiView {
 
   static buildNavBar(response) {
     let navBarPaths = response.main_paths
+    var html = ""
 
-    let headers = navBarPaths.map(function(path) {
-      return path["main_branch"]
+    navBarPaths.map( (path, index)=> {
+      var new_header = path.main_branch.slice(0, -1)
+      var cap_header = new_header.charAt(0).toUpperCase() + new_header.slice(1)
+      html += `<li><a href='#' id=${path.main_branch} class='main-path'>${cap_header}</li>`
     })
+    $("#api-main-paths").html(html)
 
-
+    createMainPathListeners(response.base_url)
   }
+
+  static mainPathRender(response){
+    console.log(response)
+    parsedResponse = response.map((el) => {
+      console.log(el)
+    })
+  }
+
 }
