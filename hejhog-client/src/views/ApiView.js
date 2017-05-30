@@ -34,11 +34,5 @@ class ApiView {
     createMainPathListeners(response.base_url)
   }
 
-  static mainPathRender(response){
-    console.log(response)
-    parsedResponse = response.map((el) => {
-      console.log(el)
-    })
-  }
 
 }

@@ -55,4 +55,36 @@ static addApi(values) {
   })
 }
 
+static mainPathRender(response){
+  console.log(response)
+  if (response.constructor === Array){
+    Api.renderArray(response)
+  } else if (response.constructor === Object){
+    var results = response.results
+    Api.renderArray(results, response.next)
+  }
+}
+
+static renderArray(array, nextLink){
+  var html = `<p><a href=${nextLink}>Next</a></p>`
+  html += "<ul>"
+  array.map((el) => {
+    for (var key in el) {
+      html += `${key}: ${el[key]}<br>`
+    }
+  })
+  html += "</ul>"
+  $("#main-body").html(html)
+}
+
+static renderObject(object){
+  var html = "<ul>"
+  for (var key in object) {
+
+    html += `${key}: ${object[key]}<br>`
+  }
+  html += "</ul>"
+  $("#main-body").html(html)
+}
+
 }
