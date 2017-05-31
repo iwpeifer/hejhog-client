@@ -1,6 +1,7 @@
 $(document).ready(function() {
   getAPI()
   returnHome()
+  postNewApi()
 })
 
 function getAPI() {
@@ -35,5 +36,12 @@ function returnHome(){
   $("a.navbar-brand").click(function(e){
     ApiView.clearNavBar()
     getAPI()
+  })
+}
+
+function postNewApi(){
+  $("#submit").click(function(event){
+    event.preventDefault()
+    Api.addApi()
   })
 }

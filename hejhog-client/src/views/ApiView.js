@@ -1,7 +1,6 @@
 class ApiView {
 
   static render(response) {
-    console.log("FUCK")
     var html = "<div class=\"results\">"
 
     $.each(response, function(index, api) {
@@ -30,6 +29,10 @@ class ApiView {
     $("#api-main-paths").html(html)
 
     createMainPathListeners(response.base_url)
+  }
+
+  static clearNavBar(){
+    $("#api-main-paths").html("")
   }
 
 }
