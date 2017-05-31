@@ -34,5 +34,8 @@ class ApiView {
     createMainPathListeners(response.base_url)
   }
 
+  static renderSubLinks(){
+    // html of rendered sublinks
+  }
 
 }
