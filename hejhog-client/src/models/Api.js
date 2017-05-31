@@ -110,7 +110,8 @@ class Api {
     })
 
     html += "</ul>"
-    $("#main-body").html(html)
+
+    $("#existing-api-links").html(html)
     createSubLinksListeners()
   }
 
@@ -154,12 +155,11 @@ class Api {
   }
 
   static getName(response) {
-
     var name = ""
+
     if (response.hasOwnProperty("name") && response["name"] !== ""){
       name = response["name"]
     } else if (typeof response === 'string' && response.startsWith("https://")) {
-
        name = Api.callSubLinks(response, Api.getName)
     } else {
       var arr = Object.values(response)
@@ -178,5 +178,4 @@ class Api {
     console.log("retrieving", name)
     return name
   }
-
 }

@@ -1,6 +1,7 @@
 class ApiView {
 
   static render(response) {
+    console.log("FUCK")
     var html = "<div class=\"results\">"
 
     $.each(response, function(index, api) {

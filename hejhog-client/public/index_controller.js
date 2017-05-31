@@ -1,5 +1,6 @@
 $(document).ready(function() {
   getAPI()
+  returnHome()
 })
 
 function getAPI() {
@@ -27,5 +28,12 @@ function createSubLinksListeners() {
   $(".sub-link").click(function(e) {
     var url = this.dataset.url
     Api.callSubLinks(url, Api.mainPathRender)
+  })
+}
+
+function returnHome(){
+  $("a.navbar-brand").click(function(e){
+    ApiView.clearNavBar()
+    getAPI()
   })
 }
