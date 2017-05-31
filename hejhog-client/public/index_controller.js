@@ -1,14 +1,13 @@
-$(document).ready(function(){
+$(document).ready(function() {
   getAPI()
 })
 
 function getAPI() {
   Api.all(ApiView.render)
-
 }
 
 function createApiListeners() {
-  $(".api-base-link").click(function(e){
+  $(".api-base-link").click(function(e) {
     var baseId = this.id
 
     Api.individualApiCall(ApiView.individualApiRender, baseId)
@@ -16,7 +15,7 @@ function createApiListeners() {
 }
 
 function createMainPathListeners(baseUrl) {
-  $(".main-path").click(function(e){
+  $(".main-path").click(function(e) {
     var mainPath = this.id
 
     // call ajax to get specific apis information rendered
@@ -24,8 +23,9 @@ function createMainPathListeners(baseUrl) {
   })
 }
 
-function createSubLinksListeners(url) {
-  $(".sub-link").click(function(e){
-    Api.callSubLinks(url, ApiView.renderSubLinks)
+function createSubLinksListeners() {
+  $(".sub-link").click(function(e) {
+    var url = this.dataset.url
+    Api.callSubLinks(url, Api.mainPathRender)
   })
 }

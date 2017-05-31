@@ -41,67 +41,110 @@ class Api {
     })
   }
 
-static addApi(values) {
-  $.ajax({
-    type: 'POST',
-    url: 'http://localhost:3000/api/v1/zoos',
-    contentType: 'application/json',
-    dataType: 'json',
-    data: values,
-    success: function(response) {
-      ZooView.addZoosToDom(response)
-      Zoo.all(Zoo.refreshMap)
-    }
-  })
-}
-
-static mainPathRender(response){
-  console.log(response)
-  if (response.constructor === Array){
-    Api.renderArray(response)
-  } else if (response.constructor === Object){
-    var results = response.results
-    Api.renderArray(results, response.next)
-  }
-}
-
-static renderArray(array, nextLink) {
-    var html = `<p><a href=${nextLink}>Next</a></p>`
-    html += "<ul>"
-    array.forEach((el) => {
-      // if String or Object {} (object is length of 1 or 0 or more than 1)
-      // if string call ajax on string to get name/second element of response and also make a listener immmediately
-      // if object w/ length > 1 get url key do string actions
-      //  if object 0 length do nothing
-      // if object 1 get 0 index/ singular key. Check if key is a string or a link string
-      var name = ""
-      if (el.name.length > 0) {
-        name = el.name
-      } else {
-        name = Api.getName(el)
-      }
-      if (typeof el === 'string' && el.startsWith("https://")) {
-        html += `<li><a href="#" class="sub-link">${name}</a></li>`
-        createSubLinksListeners(el)
-      } else if ((Object.prototype.toString.call(el) === '[object Object]') && (Object.keys(el).length > 1)) {
-        var url = el["url"]
-        html += `<li><a href="#" class="sub-link">${name}</a></li>`
-        createSubLinksListeners(url)
-      } else if ((Object.prototype.toString.call(el) === '[object Object]') && (Object.keys(el).length === 1)) {
-        html += `<li><a href="#" class="sub-link">${name}</a></li>`
-        createSubLinksListeners(el)
-      } else if ((Object.prototype.toString.call(el) === '[object Object]') && (Object.keys(el).length === 0)) {
-      } else { //pure string that is not a link
-        html += `<li>${el}</li>`
+  static addApi(values) {
+    $.ajax({
+      type: 'POST',
+      url: 'http://localhost:3000/api/v1/zoos',
+      contentType: 'application/json',
+      dataType: 'json',
+      data: values,
+      success: function(response) {
+        ZooView.addZoosToDom(response)
+        Zoo.all(Zoo.refreshMap)
       }
     })
+  }
+
+  static checkType(el, name) {
+    var html = ""
+
+    if (typeof el === 'string' && el.startsWith("https://")) {
+      html += `<li><a href="#" class="sub-link" data-url=${el}>${name}</a></li>`
+    } else if ((Object.prototype.toString.call(el) === '[object Object]') && (Object.keys(el).length > 1)) {
+
+      if (el["url"] != undefined) {
+        var url = el["url"]
+        html += `<li><a href="#" class="sub-link" data-url=${url}>${name}</a></li>`
+      } else {
+        Api.renderObject(el)
+      }
+
+    } else if ((Object.prototype.toString.call(el) === '[object Object]') && (Object.keys(el).length === 1)) {
+
+      if (el["url"] != undefined) {
+        html += `<li><a href="#" class="sub-link" data-url=${el["url"]}>${name}</a></li>`
+      } else {
+        html += `<li>${Object.keys(el).join()}${Object.values(el).join()}</li>`
+      }
+
+    } else if ((Object.prototype.toString.call(el) === '[object Object]') && (Object.keys(el).length === 0)) {
+      // render nothing
+    } else {
+      html += `<li>${el}</li>`
+    }
+
+    return html
+  }
+
+  static mainPathRender(response) {
+    if (response.constructor === Array) {
+      Api.renderArray(response)
+    } else if (response.constructor === Object) {
+      var results
+      if (response.results != undefined) {
+        results = response.results
+        Api.renderArray(results, response.next)
+      } else {
+          Api.renderObject(response)
+      }
+    }
+  }
+
+  static renderArray(array, nextLink) {
+    var html = `<p><a href=${nextLink}>Next</a></p>`
+    html += "<ul>"
+
+    array.forEach((el) => {
+      var name = Api.getName(el)
+      html += Api.checkType(el, name)
+    })
+
     html += "</ul>"
     $("#main-body").html(html)
+    createSubLinksListeners()
   }
+
+  static renderObject(response) {
+    var html = "<ul>"
+
+      for(var key in response) {
+
+        if ((Object.prototype.toString.call(response[key]) === '[object Array]')) {
+
+          html += `${key}: <ul>`
+
+          response[key].forEach(function(el) {
+            var name = Api.getName(el)
+            console.log(name)
+            html += Api.checkType(el, name)
+          })
+
+          html += "</ul>"
+        } else {
+          html += `<li>${key}: ${response[key]}</li>`
+        }
+      }
+
+    html += "/<ul>"
+
+    $("#main-body").html(html)
+    createSubLinksListeners()
+  }
+
   static callSubLinks(target_url, callbackFn) {
     $.ajax({
       type: 'GET',
-      url: target_url,
+      url: `${target_url}`,
       contentType: 'application/json',
       dataType: 'json',
       success: function(response) {
@@ -109,16 +152,31 @@ static renderArray(array, nextLink) {
       }
     })
   }
+
   static getName(response) {
-    var arr = Object.values(response)
-    arr.shift()
-    var longest = arr.reduce(function(a, b) {
-      return a.length > b.length ? a : b;
-    });
-    if (response.name.length === 0) {
-      return longest
+
+    var name = ""
+    if (response.hasOwnProperty("name") && response["name"] !== ""){
+      name = response["name"]
+    } else if (typeof response === 'string' && response.startsWith("https://")) {
+
+       name = Api.callSubLinks(response, Api.getName)
     } else {
-      return response.name
+      var arr = Object.values(response)
+      if (arr[0].startsWith("http")){
+        arr.shift()
+      }
+      if (arr[0] === ""){
+        var longest = arr.reduce(function(a, b) {
+          return a.length > b.length ? a : b
+        })
+        name = longest
+      } else {
+        name = arr[0]
+      }
     }
+    console.log("retrieving", name)
+    return name
   }
+
 }
