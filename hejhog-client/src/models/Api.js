@@ -74,12 +74,12 @@ static renderArray(array, nextLink) {
       // if object w/ length > 1 get url key do string actions
       //  if object 0 length do nothing
       // if object 1 get 0 index/ singular key. Check if key is a string or a link string
-      var name = ""
-      if (el.name.length > 0) {
-        name = el.name
-      } else {
-        name = Api.getName(el)
-      }
+      var name = Api.getName(el)
+      // if (el.name.length > 0) {
+      //   name = el.name
+      // } else {
+      //   name = Api.getName(el)
+      // }
       if (typeof el === 'string' && el.startsWith("https://")) {
         html += `<li><a href="#" class="sub-link">${name}</a></li>`
         createSubLinksListeners(el)
@@ -96,7 +96,7 @@ static renderArray(array, nextLink) {
       }
     })
     html += "</ul>"
-    $("#main-body").html(html)
+    $("#existing-api-links").html(html)
   }
   static callSubLinks(target_url, callbackFn) {
     $.ajax({
@@ -110,15 +110,31 @@ static renderArray(array, nextLink) {
     })
   }
   static getName(response) {
-    var arr = Object.values(response)
-    arr.shift()
-    var longest = arr.reduce(function(a, b) {
-      return a.length > b.length ? a : b;
-    });
-    if (response.name.length === 0) {
-      return longest
+    var name = ""
+    if (response.hasOwnProperty("name") && response["name"] !== ""){
+      name = response["name"]
     } else {
-      return response.name
+      var arr = Object.values(response)
+      if (arr[0].startsWith("http")){
+        arr.shift()
+      }
+      if (arr[0] === ""){
+        var longest = arr.reduce(function(a, b) {
+          return a.length > b.length ? a : b
+        })
+        name = longest
+      } else {
+        name = arr[0]
+      }
     }
+    return name
+    // var longest = arr.reduce(function(a, b) {
+    //   return a.length > b.length ? a : b;
+    // });
+    // if (response.name.length === 0) {
+    //   return longest
+    // } else {
+    //   return response.name
+    // }
   }
 }

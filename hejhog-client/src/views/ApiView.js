@@ -1,6 +1,7 @@
 class ApiView {
 
   static render(response) {
+    console.log("FUCK")
     var html = "<div class=\"results\">"
 
   $.each(response, function(index, api) {
@@ -36,6 +37,10 @@ class ApiView {
 
   static renderSubLinks(){
     // html of rendered sublinks
+  }
+
+  static clearNavBar(){
+    $("#api-main-paths").html("")
   }
 
 }
