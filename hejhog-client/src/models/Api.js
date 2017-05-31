@@ -84,8 +84,16 @@ static renderArray(array, nextLink) {
         html += `<li><a href="#" class="sub-link">${name}</a></li>`
         createSubLinksListeners(el)
       } else if ((Object.prototype.toString.call(el) === '[object Object]') && (Object.keys(el).length > 1)) {
-        var url = el["url"]
-        html += `<li><a href="#" class="sub-link">${name}</a></li>`
+          // check if there is a url key
+          if (el["url"] != undefined){
+            var url = el["url"]
+            html += `<li><a href="#" class="sub-link">${name}</a></li>`
+          } else {
+            for (var key in el){
+              html += `<li>${key}: ${el["key"]}</li>`
+            }
+          }
+
         createSubLinksListeners(url)
       } else if ((Object.prototype.toString.call(el) === '[object Object]') && (Object.keys(el).length === 1)) {
         html += `<li><a href="#" class="sub-link">${name}</a></li>`
